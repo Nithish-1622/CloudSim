@@ -1,0 +1,28 @@
+{
+  "name": "cloudsim-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CloudSim - Cloud Simulation & SaaS Workload Playground",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "simulator",
+    "workers",
+    "database"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:worker": "npm run dev --workspace=workers",
+    "seed": "npm run seed --workspace=database",
+    "benchmark": "tsx scripts/benchmark.ts",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "tsx": "^4.19.2"
+  }
+}
