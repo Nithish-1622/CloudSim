@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@cloudsim/shared": ["packages/shared/src/index.ts"],
+      "@cloudsim/database": ["database/src/index.ts"],
+      "@cloudsim/simulator": ["simulator/src/index.ts"],
+      "@cloudsim/workers": ["workers/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next"]
+}
