@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": "../..",
+    "paths": {
+      "@cloudsim/shared": ["packages/shared/dist/index.d.ts"],
+      "@cloudsim/database": ["database/dist/index.d.ts"],
+      "@cloudsim/simulator": ["simulator/dist/index.d.ts"],
+      "@cloudsim/workers": ["workers/dist/index.d.ts"]
+    }
+  },
+  "include": ["src/**/*"]
+}
