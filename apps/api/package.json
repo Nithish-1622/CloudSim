@@ -1,0 +1,23 @@
+{
+  "name": "@cloudsim/api",
+  "version": "1.0.0",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/server.ts"
+  },
+  "dependencies": {
+    "@cloudsim/database": "*",
+    "@cloudsim/shared": "*",
+    "@cloudsim/workers": "*",
+    "@fastify/cors": "^10.0.2",
+    "@fastify/websocket": "^11.0.2",
+    "fastify": "^5.2.1",
+    "ioredis": "^5.4.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}

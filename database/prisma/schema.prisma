@@ -1,0 +1,273 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         String    @default("USER")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  projects     Project[]
+
+  @@map("users")
+}
+
+model Project {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  simulations Simulation[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("projects")
+}
+
+model Simulation {
+  id              String             @id @default(uuid())
+  name            String
+  description     String?
+  projectId       String?
+  project         Project?           @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  application     String
+  virtualUsers    Int
+  targetRps       Int
+  durationSeconds Int
+  trafficPattern  String
+  cacheEnabled    Boolean            @default(true)
+  intensity       String             @default("MEDIUM")
+  status          String             @default("QUEUED")
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  metrics         SimulationMetric[]
+  events          WorkloadEvent[]
+
+  @@index([status])
+  @@index([application])
+  @@index([createdAt])
+  @@map("simulations")
+}
+
+model SimulationMetric {
+  id                  String     @id @default(uuid())
+  simulationId        String
+  simulation          Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+  timestamp           DateTime   @default(now())
+  activeUsers         Int
+  currentRps          Float
+  targetRps           Int
+  totalRequests       Int
+  successfulRequests  Int
+  failedRequests      Int
+  avgLatencyMs        Float
+  p50LatencyMs        Float
+  p95LatencyMs        Float
+  p99LatencyMs        Float
+  minLatencyMs        Float
+  maxLatencyMs        Float
+  errorRatePercentage Float
+  cacheHitRate        Float
+  throughputKbps      Float
+  endpointMetrics     Json
+
+  @@index([simulationId, timestamp])
+  @@map("simulation_metrics")
+}
+
+model WorkloadEvent {
+  id           String     @id @default(uuid())
+  simulationId String
+  simulation   Simulation @relation(fields: [simulationId], references: [id], onDelete: Cascade)
+  timestamp    DateTime   @default(now())
+  eventType    String
+  message      String
+  metadata     Json?
+
+  @@index([simulationId, timestamp])
+  @@map("workload_events")
+}
+
+// ==================== STUDENT ERP SCHEMA ====================
+model Student {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  department    String
+  year          Int
+  gpa           Float
+  createdAt     DateTime       @default(now())
+  attendances   Attendance[]
+  marks         Mark[]
+  fees          Fee[]
+  notifications Notification[]
+
+  @@index([department])
+  @@map("students")
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  date      DateTime
+  status    String   // PRESENT, ABSENT, LATE
+  subject   String
+
+  @@index([studentId])
+  @@map("attendance")
+}
+
+model Mark {
+  id        String  @id @default(uuid())
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject   String
+  score     Float
+  maxScore  Float   @default(100)
+  grade     String
+
+  @@index([studentId])
+  @@map("marks")
+}
+
+model Timetable {
+  id         String @id @default(uuid())
+  department String
+  year       Int
+  dayOfWeek  String
+  subject    String
+  room       String
+  timeSlot   String
+
+  @@index([department, year])
+  @@map("timetables")
+}
+
+model Fee {
+  id        String    @id @default(uuid())
+  studentId String
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  amount    Float
+  dueDate   DateTime
+  status    String    // PAID, PENDING, OVERDUE
+  semester  String
+
+  @@index([studentId])
+  @@map("fees")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
+  @@map("notifications")
+}
+
+// ==================== CRM SCHEMA ====================
+model Customer {
+  id            String        @id @default(uuid())
+  name          String
+  email         String        @unique
+  company       String
+  industry      String
+  status        String        // ACTIVE, INACTIVE, LEAD
+  createdAt     DateTime      @default(now())
+  leads         Lead[]
+  opportunities Opportunity[]
+
+  @@map("customers")
+}
+
+model Lead {
+  id         String   @id @default(uuid())
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  title      String
+  value      Float
+  status     String   // NEW, CONTACTED, QUALIFIED, LOST
+  source     String
+  createdAt  DateTime @default(now())
+
+  @@map("leads")
+}
+
+model Opportunity {
+  id          String   @id @default(uuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  name        String
+  amount      Float
+  stage       String   // PROSPECTING, NEGOTIATION, CLOSED_WON, CLOSED_LOST
+  probability Float
+  closeDate   DateTime
+
+  @@map("opportunities")
+}
+
+// ==================== E-COMMERCE SCHEMA ====================
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  sku         String   @unique
+  category    String
+  price       Float
+  stock       Int
+  description String
+  createdAt   DateTime @default(now())
+
+  @@index([category])
+  @@index([name])
+  @@map("products")
+}
+
+model Cart {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  items       Json     // Array of { productId, quantity, price }
+  totalAmount Float
+  updatedAt   DateTime @updatedAt
+
+  @@map("carts")
+}
+
+model Order {
+  id          String   @id @default(uuid())
+  userId      String
+  totalAmount Float
+  status      String   // PENDING, COMPLETED, CANCELLED
+  items       Json
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@map("orders")
+}
+
+// ==================== CHAOS CONFIGURATION ====================
+model ChaosConfig {
+  id                       String   @id @default("default")
+  latencyInjectionMs       Int      @default(0)
+  errorInjectionPercentage Float    @default(0)
+  cacheDisabled            Boolean  @default(false)
+  trafficSpikeActive       Boolean  @default(false)
+  updatedAt                DateTime @updatedAt
+
+  @@map("chaos_configs")
+}
