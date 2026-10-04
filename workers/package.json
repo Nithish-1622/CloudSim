@@ -1,0 +1,20 @@
+{
+  "name": "@cloudsim/workers",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/simulation-worker.ts"
+  },
+  "dependencies": {
+    "@cloudsim/database": "*",
+    "@cloudsim/shared": "*",
+    "@cloudsim/simulator": "*",
+    "ioredis": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2"
+  }
+}
