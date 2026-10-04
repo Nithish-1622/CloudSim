@@ -1,7 +1,24 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
+build/
+.next/
+out/
+
+# Generated TypeScript build artifacts in src/
+**/src/**/*.js
+**/src/**/*.d.ts
+**/src/**/*.js.map
+**/src/**/*.d.ts.map
+
+# Environment files
 .env
 .env.example
+
+
+# OS & IDE
 .DS_Store
-
-
+.idea/
+*.log
